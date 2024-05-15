@@ -1,11 +1,15 @@
 import requests
 import base64
 #from typing import List, Dict
-#import json
+import json
 from time import sleep
-#import pandas as pd
+import pandas as pd
+import os
 from crenciais import Credential
 import multiprocessing
+from datetime import datetime
+import random
+import string
 
 class Consume:
     @property
@@ -25,6 +29,7 @@ class Consume:
             return self.__next_page
         except AttributeError:
             return None
+        
 
     def __init__(self, *, email:str, token:str) -> None:
         if (not isinstance(email, str)) or (not isinstance(token, str)):
@@ -34,6 +39,7 @@ class Consume:
         encode_phrase:str = base64.b64encode(phrase).decode()
         self.__token:str = encode_phrase
         #print(f"{self.token=}")
+        
         
     def request_api(self, url:str) -> requests.models.Response:
         if not isinstance(url, str):
@@ -77,6 +83,7 @@ class Consume:
     def all_pages(self, url:str) -> list:# -> requests.models.Response:
         first_response:dict = self.request_api(url).json()
         keys:list = list(first_response.keys())
+
         content:list = first_response.get(keys[0]) #type: ignore
         last_next_page:str = "987456123987456132987465132"
         while self.next_page != None:
@@ -99,8 +106,16 @@ class Consume:
     def all_tickets(self, *, url_patter:str, contador:int=0) -> dict|list:
         while url_patter.endswith('/'):
             url_patter = url_patter[:-1]
+            
+        path_temp = "temp_file/"
+        if not os.path.exists(path_temp):
+            os.makedirs(path_temp)
         
-        final_content:list = [] 
+        file_name_temp:str = path_temp + f"File_temp_{str(datetime.now()).replace(':', '_')}_.json"
+        pd.DataFrame().to_json(file_name_temp, orient='records')
+        content_variable:list = []
+        
+        
         while True:
             list_ids:list = [str((num+1)+contador) for num in range(100)]
         
@@ -111,19 +126,36 @@ class Consume:
             
             api:dict = self.request_api(url_mod).json()
             content:dict|list = api.get('tickets')# type: ignore
+            
+            #final_content += content
+            content_variable += content
+            if len(content_variable) or (not content) >= 10000:
+                #print("alimentou")
+                df_temp = pd.read_json(file_name_temp)
+                acumulate_temp_df = pd.DataFrame(content_variable)
+                pd.concat([df_temp, acumulate_temp_df], ignore_index=True).to_json(file_name_temp, orient='records')
+                del df_temp
+                del acumulate_temp_df
+                content_variable = []             
+            
             if not content:
                 break
-            final_content += content
+            
             contador += 100
+        
+        final_content:dict = pd.read_json(file_name_temp).to_dict()
+        os.unlink(file_name_temp)
         return final_content
             
 
 
 if __name__ == "__main__":
-    pass
+    #pass
     #df = pd.read_excel('test.xlsx')
     #df.to_json('all_tickes_temp.json', orient='records')
-    
+    crd:dict = Credential("API_ZENDESK").load()
+    bot = Consume(email=crd['user'], token=crd['password'])
+    bot.all_tickets(url_patter="https://patrimar.zendesk.com")
 
     #print(pd.DataFrame(api))
     

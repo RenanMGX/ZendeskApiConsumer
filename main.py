@@ -116,6 +116,8 @@ class SaveJson:
             except:
                 pass
             
+            df["created_at"] = df["created_at"].dt.strftime('%Y-%m-%dT%H:%M:%S')
+            df["updated_at"] = df["updated_at"].dt.strftime('%Y-%m-%dT%H:%M:%S')
             df.to_json((self.path + file_name), orient='records')
     
 
@@ -191,25 +193,11 @@ if __name__ == "__main__":
         for process in threads:
             process.start()
         
-        
-        #MultiProcessos.execut(file_name="users", url=f"{url_pattern}/api/v2/users/search.json")
-        #MultiProcessos.execut(file_name="groups", url=f"{url_pattern}/api/v2/groups.json")
-        #MultiProcessos.execut(file_name="organizations", url=f"{url_pattern}/api/v2/organizations.json")
-        #MultiProcessos.execut(file_name="slas_policies", url=f"{url_pattern}/api/v2/slas/policies.json")
-        #MultiProcessos.execut(file_name="ticket_audits", url=f"{url_pattern}/api/v2/ticket_audits.json")
-        #MultiProcessos.execut(file_name="ticket_forms", url=f"{url_pattern}/api/v2/ticket_forms.json")
-        #MultiProcessos.execut(file_name="ticket_fields", url=f"{url_pattern}/api/v2/ticket_fields.json")
-        #MultiProcessos.execut(file_name="requests", url=f"{url_pattern}/api/v2/requests.json")
-        #MultiProcessos.execut(file_name="activities", url=f"{url_pattern}/api/v2/activities.json")
-        #MultiProcessos.execut(file_name="brands", url=f"{url_pattern}/api/v2/brands.json")
-        #MultiProcessos.execut(file_name="custom_statuses", url=f"{url_pattern}/api/v2/custom_statuses.json")
-        #MultiProcessos.execut(file_name="ticket_metrics", url=f"{url_pattern}/api/v2/ticket_metrics")
-        #MultiProcessos.execut(file_name="incremental_ticket_metric_events", url=f"{url_pattern}/api/v2/incremental/ticket_metric_events.json?start_time=1")
-        
-        thread_alltickets.join()
         for process in threads:
             process.join()
         
+        
+        thread_alltickets.join()
         print(datetime.now() - agora)
     
     except Exception as error:
