@@ -238,7 +238,7 @@ class SaveJson:
             }         
             df["jc_diretoria_gerencia_ou_gerencia_de_obra"] = df["jc_diretoria_gerencia_ou_gerencia_de_obra"].map(nomeclatura)
                
-            df.to_json((self.path + file_name), orient='records')
+            df.to_json((self.path + file_name), orient='records', date_format='iso')
     
 
         

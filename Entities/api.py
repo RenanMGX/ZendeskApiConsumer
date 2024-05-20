@@ -129,13 +129,14 @@ class Consume:
             
             #final_content += content
             content_variable += content
-            if len(content_variable) or (not content) >= 10000:
+            if (len(content_variable) >= 5000) or (not content):
                 #print("alimentou")
-                df_temp = pd.read_json(file_name_temp)
-                acumulate_temp_df = pd.DataFrame(content_variable)
-                pd.concat([df_temp, acumulate_temp_df], ignore_index=True).to_json(file_name_temp, orient='records')
-                del df_temp
-                del acumulate_temp_df
+                #df_temp = pd.read_json(file_name_temp)
+                #acumulate_temp_df = pd.DataFrame(content_variable)
+                pd.DataFrame(content_variable).to_json(file_name_temp, orient='records', lines=True, mode='a')
+                #pd.concat([df_temp, acumulate_temp_df], ignore_index=True).to_json(file_name_temp, orient='records')
+                #del df_temp
+                #del acumulate_temp_df
                 content_variable = []             
             
             if not content:
@@ -143,7 +144,9 @@ class Consume:
             
             contador += 100
         
-        final_content:dict = pd.read_json(file_name_temp).to_dict()
+
+        final_content:dict = pd.read_json(file_name_temp, orient='records', lines=True).to_dict()
+
         os.unlink(file_name_temp)
         return final_content
             
