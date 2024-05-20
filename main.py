@@ -116,8 +116,12 @@ class SaveJson:
             except:
                 pass
             
-            df["created_at"] = df["created_at"].dt.strftime('%Y-%m-%dT%H:%M:%S')
-            df["updated_at"] = df["updated_at"].dt.strftime('%Y-%m-%dT%H:%M:%S')
+            df['created_at'] = pd.to_datetime(df['created_at'])
+            df['created_at'] = df['created_at'].apply(lambda x: x.isoformat())
+            
+            df['updated_at'] = pd.to_datetime(df['updated_at'])
+            df['updated_at'] = df['updated_at'].apply(lambda x: x.isoformat())
+            
             df.to_json((self.path + file_name), orient='records')
     
 
