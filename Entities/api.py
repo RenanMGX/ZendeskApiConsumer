@@ -133,13 +133,16 @@ class Consume:
                 
                 contador += 100
             
+            vazio = False
             for thread in threads:
                 temp_fila:multiprocessing.Queue = thread['fila']
                 content:dict|list = temp_fila.get().json().get('tickets')# type: ignore
+                if not content:
+                    vazio = True
                 content_variable += content
                 
              #final_content += content    
-            if (len(content_variable) >= 5000) or (not content_variable):
+            if (len(content_variable) >= 5000) or (vazio):
                 #print("alimentou")
                 df = pd.DataFrame(content_variable)
                 df = Tratar.start(df)
