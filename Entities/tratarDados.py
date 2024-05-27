@@ -13,7 +13,7 @@ class Tratar:
                 for fields_value in df_value["fields"]:
                     if fields_value["id"] == 11062650498327:
                         jc_diretoria_gerencia_ou_gerencia_de_obra.append(fields_value["value"])
-                    elif fields_value["id"] == 11952743536919:
+                    elif fields_value["id"] == 11062960751255:
                         jc_tipo_demanda_contratos.append(fields_value["value"])
                                 
             df["jc_diretoria_gerencia_ou_gerencia_de_obra"] = jc_diretoria_gerencia_ou_gerencia_de_obra
