@@ -6,14 +6,19 @@ class Tratar:
     def start(df:pd.DataFrame) -> pd.DataFrame:
         try:
             jc_diretoria_gerencia_ou_gerencia_de_obra = []
+            jc_tipo_demanda_contratos = []
                     
             for row, df_value in df.iterrows():
                 #jc_diretoria_gerencia_ou_gerencia_de_obra
                 for fields_value in df_value["fields"]:
                     if fields_value["id"] == 11062650498327:
                         jc_diretoria_gerencia_ou_gerencia_de_obra.append(fields_value["value"])
+                    elif fields_value["id"] == 11952743536919:
+                        jc_tipo_demanda_contratos.append(fields_value["value"])
                                 
             df["jc_diretoria_gerencia_ou_gerencia_de_obra"] = jc_diretoria_gerencia_ou_gerencia_de_obra
+            df["jc_tipo_demanda_contratos"] = jc_tipo_demanda_contratos
+            
         except:
             pass
             

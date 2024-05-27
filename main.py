@@ -179,7 +179,7 @@ if __name__ == "__main__":
             {"file_name" : "incremental_ticket_metric_events", "url" : f"{url_pattern}/api/v2/incremental/ticket_metric_events.json?start_time=1"},   
         ]
         
-        threads:list[multiprocessing.Process] = []
+        threads:List[multiprocessing.Process] = []
         
         for request in list_for_execute:
             threads.append(multiprocessing.Process(target=MultiProcessos.execut, args=(register, saving_api_json, api_consume_admin, request["file_name"], request["url"])))
