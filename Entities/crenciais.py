@@ -4,9 +4,11 @@ from copy import deepcopy
 import traceback
 from random import randint
 from getpass import getuser
+from typing import Literal, Dict
 
 class Credential:
-    def __init__(self, name:str, *, path:str=f"C:\\Users\\{getuser()}\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\CRD\\.patrimar_rpa\\credenciais\\") -> None:
+    def __init__(self, name_file:Literal["API_ZENDESK"], path:str=f"C:\\Users\\{getuser()}\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\CRD\\.patrimar_rpa\\credenciais\\") -> None:
+        name:str = str(name_file)
         if not isinstance(path, str):
             raise TypeError("apenas strings")
         if not isinstance(name, str):
@@ -53,7 +55,7 @@ class Credential:
         
         if not os.path.exists(self.path):
             with open(self.path, 'w')as _file:
-                json.dump({"user": "", "password": "", "key": 0},_file)
+                json.dump({"key": 0},_file)
             #raise FileNotFoundError(f"{self.path=} não existe! então foi criar uma no repositorio, edite as credenciais e execute o codigo novamente!")
 
         with open(self.path, 'r')as _file:
@@ -68,15 +70,15 @@ class Credential:
         return new_result
                             
     
-    def save(self, *, user:str, password:str) -> None:
-        key = randint(500,6000)
+    def save(self, **kargs) -> None:
+        token = randint(500,6000)
+        
+        words:Dict[str,object] = {key:self.criar_cifra(value, token) for key,value in kargs.items()}
+        words['key'] = token
+        
         with open(self.path, 'w')as _file:
             json.dump(
-                {
-                    'user':self.criar_cifra(user, key),
-                    'password':self.criar_cifra(password, key),
-                    'key': key
-                },
+                words,
                 _file)
     
     def criar_cifra(self, text:str, key:int=1, response_json:bool=False) -> str:
@@ -114,9 +116,8 @@ class Credential:
         return self.criar_cifra(text, -key)
         
 if __name__ == "__main__":
-    credential = Credential("API_ZENDESK")
-
+    crd = Credential('API_ZENDESK')
     
-    print(credential.load())
+    print(crd.load())
     
     
