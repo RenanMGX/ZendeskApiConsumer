@@ -163,21 +163,25 @@ if __name__ == "__main__":
         thread_alltickets = multiprocessing.Process(target=MultiProcessos.execut_all_tickets, args=(register, saving_api_json, api_consume_admin, url_pattern, "tickets"))
         thread_alltickets.start()
         
-        list_for_execute:List[dict] = [
-            {"file_name" : "users", "url" : f"{url_pattern}/api/v2/users/search.json"},
-            {"file_name" : "groups", "url" : f"{url_pattern}/api/v2/groups.json"},
-            {"file_name" : "organizations", "url" : f"{url_pattern}/api/v2/users/search.json"},
-            {"file_name" : "slas_policies", "url" : f"{url_pattern}/api/v2/slas/policies.json"},
-            {"file_name" : "ticket_audits", "url" : f"{url_pattern}/api/v2/ticket_audits.json"},
-            {"file_name" : "ticket_forms", "url" : f"{url_pattern}/api/v2/ticket_forms.json"},
-            {"file_name" : "ticket_fields", "url" : f"{url_pattern}/api/v2/ticket_fields.json"},
-            {"file_name" : "requests", "url" : f"{url_pattern}/api/v2/requests.json"},
-            {"file_name" : "activities", "url" : f"{url_pattern}/api/v2/activities.json"},
-            {"file_name" : "brands", "url" : f"{url_pattern}/api/v2/brands.json"},
-            {"file_name" : "custom_statuses", "url" : f"{url_pattern}/api/v2/custom_statuses.json"},
-            {"file_name" : "ticket_metrics", "url" : f"{url_pattern}/api/v2/ticket_metrics"},
-            {"file_name" : "incremental_ticket_metric_events", "url" : f"{url_pattern}/api/v2/incremental/ticket_metric_events.json?start_time=1"},   
-        ]
+        list_for_execute:List[dict] = []
+            
+        list_for_execute.append({"file_name" : "users", "url" : f"{url_pattern}/api/v2/users/search.json"})
+        list_for_execute.append({"file_name" : "groups", "url" : f"{url_pattern}/api/v2/groups.json"})
+        list_for_execute.append({"file_name" : "slas_policies", "url" : f"{url_pattern}/api/v2/slas/policies.json"})
+        list_for_execute.append({"file_name" : "ticket_audits", "url" : f"{url_pattern}/api/v2/ticket_audits.json"})
+        list_for_execute.append({"file_name" : "ticket_forms", "url" : f"{url_pattern}/api/v2/ticket_forms.json"})
+        list_for_execute.append({"file_name" : "ticket_fields", "url" : f"{url_pattern}/api/v2/ticket_fields.json"})
+        list_for_execute.append({"file_name" : "requests", "url" : f"{url_pattern}/api/v2/requests.json"})
+        list_for_execute.append({"file_name" : "activities", "url" : f"{url_pattern}/api/v2/activities.json"})
+        list_for_execute.append({"file_name" : "brands", "url" : f"{url_pattern}/api/v2/brands.json"})
+        list_for_execute.append({"file_name" : "custom_statuses", "url" : f"{url_pattern}/api/v2/custom_statuses.json"})
+        list_for_execute.append({"file_name" : "ticket_metrics", "url" : f"{url_pattern}/api/v2/ticket_metrics"})
+        list_for_execute.append({"file_name" : "incremental_ticket_metric_events", "url" : f"{url_pattern}/api/v2/incremental/ticket_metric_events.json?start_time=1"},  )
+        
+        
+        if datetime.now().strftime("%A") == 'Sunday':
+            list_for_execute.append({"file_name" : "organizations", "url" : f"{url_pattern}/api/v2/users/search.json"})
+
         
         threads:List[multiprocessing.Process] = []
         

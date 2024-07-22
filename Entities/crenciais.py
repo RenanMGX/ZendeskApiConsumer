@@ -6,7 +6,7 @@ from random import randint
 from getpass import getuser
 
 class Credential:
-    def __init__(self, name:str, *,path:str=f"C:/Users/{getuser()}/.patrimar_rpa/credenciais/") -> None:
+    def __init__(self, name:str, *, path:str=f"C:\\Users\\{getuser()}\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\CRD\\.patrimar_rpa\\credenciais\\") -> None:
         if not isinstance(path, str):
             raise TypeError("apenas strings")
         if not isinstance(name, str):
