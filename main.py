@@ -9,6 +9,7 @@ import traceback
 import multiprocessing
 #import asyncio
 import pandas as pd
+from getpass import getuser
 from typing import List
 from shutil import copy2
 
@@ -149,7 +150,7 @@ if __name__ == "__main__":
 
         try:    
             api_consume_admin:Consume = Consume(email=crd['user'], token=crd['password'])
-            saving_api_json = SaveJson("C:\\Users\\renan.oliveira\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\Zendesk\\API\\json\\")
+            saving_api_json = SaveJson(f"C:\\Users\\{getuser()}\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\Zendesk\\API\\json\\")
         except Exception as error:
             error_when_instances:str = str(traceback.format_exc()).replace("\n", " <br> ")
             print(traceback.format_exc())
