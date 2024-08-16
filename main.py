@@ -115,6 +115,27 @@ class SaveJson:
             df = Tratar.start(df)
         df.to_json((self.path + file_name), orient='records', date_format='iso')
     
+      
+    def create_tickets_juridico(self, 
+                                file_name_origin:str, 
+                                *, 
+                                file_name:str="tickets_juridico.json", 
+                                list_id_group:List[int]= [11065757529239, 11065863178903, 11065882706967, 11427801021847, 11065848016535, 11065883363607, 11065866307479]
+                                
+                                ):
+        if not file_name_origin.endswith('.json'):
+            file_name_origin += '.json'
+            
+        file_path_origin:str = os.path.join(self.path, file_name_origin)
+        if not os.path.exists(file_path_origin):
+            raise Exception(f"o arquivo não existe '{file_path_origin}'")
+        
+        df:pd.DataFrame|pd.Series = pd.read_json(file_path_origin)
+        
+        df = df[df['group_id'].isin(list_id_group)]
+        
+        df.to_json(os.path.join(self.path, file_name), orient='records', date_format='iso')
+    
 
         
 class MultiProcessos:
@@ -144,13 +165,15 @@ if __name__ == "__main__":
         
         url_pattern:str = URLPattern("https://patrimar.zendesk.com/").url
         
+        sharepoint_path:str = f"C:\\Users\\{getuser()}\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\Zendesk\\API\\json\\"
+        
         register:Register = Register("logs")
         
         crd:dict = Credential("API_ZENDESK").load()
 
         try:    
             api_consume_admin:Consume = Consume(email=crd['user'], token=crd['password'])
-            saving_api_json = SaveJson(f"C:\\Users\\{getuser()}\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\Zendesk\\API\\json\\")
+            saving_api_json = SaveJson(sharepoint_path)
         except Exception as error:
             error_when_instances:str = str(traceback.format_exc()).replace("\n", " <br> ")
             print(traceback.format_exc())
@@ -160,43 +183,47 @@ if __name__ == "__main__":
         
         agora = datetime.now()
         
+        name_all_tickets:str = "tickets"
         
-        thread_alltickets = multiprocessing.Process(target=MultiProcessos.execut_all_tickets, args=(register, saving_api_json, api_consume_admin, url_pattern, "tickets"))
-        thread_alltickets.start()
+        # thread_alltickets = multiprocessing.Process(target=MultiProcessos.execut_all_tickets, args=(register, saving_api_json, api_consume_admin, url_pattern, name_all_tickets))
+        # thread_alltickets.start()
         
-        list_for_execute:List[dict] = []
+        # list_for_execute:List[dict] = []
             
-        list_for_execute.append({"file_name" : "users", "url" : f"{url_pattern}/api/v2/users/search.json"})
-        list_for_execute.append({"file_name" : "groups", "url" : f"{url_pattern}/api/v2/groups.json"})
-        list_for_execute.append({"file_name" : "slas_policies", "url" : f"{url_pattern}/api/v2/slas/policies.json"})
-        list_for_execute.append({"file_name" : "ticket_audits", "url" : f"{url_pattern}/api/v2/ticket_audits.json"})
-        list_for_execute.append({"file_name" : "ticket_forms", "url" : f"{url_pattern}/api/v2/ticket_forms.json"})
-        list_for_execute.append({"file_name" : "ticket_fields", "url" : f"{url_pattern}/api/v2/ticket_fields.json"})
-        list_for_execute.append({"file_name" : "requests", "url" : f"{url_pattern}/api/v2/requests.json"})
-        list_for_execute.append({"file_name" : "activities", "url" : f"{url_pattern}/api/v2/activities.json"})
-        list_for_execute.append({"file_name" : "brands", "url" : f"{url_pattern}/api/v2/brands.json"})
-        list_for_execute.append({"file_name" : "custom_statuses", "url" : f"{url_pattern}/api/v2/custom_statuses.json"})
-        list_for_execute.append({"file_name" : "ticket_metrics", "url" : f"{url_pattern}/api/v2/ticket_metrics"})
-        list_for_execute.append({"file_name" : "incremental_ticket_metric_events", "url" : f"{url_pattern}/api/v2/incremental/ticket_metric_events.json?start_time=1"},  )
+        # list_for_execute.append({"file_name" : "users", "url" : f"{url_pattern}/api/v2/users/search.json"})
+        # list_for_execute.append({"file_name" : "groups", "url" : f"{url_pattern}/api/v2/groups.json"})
+        # list_for_execute.append({"file_name" : "slas_policies", "url" : f"{url_pattern}/api/v2/slas/policies.json"})
+        # list_for_execute.append({"file_name" : "ticket_audits", "url" : f"{url_pattern}/api/v2/ticket_audits.json"})
+        # list_for_execute.append({"file_name" : "ticket_forms", "url" : f"{url_pattern}/api/v2/ticket_forms.json"})
+        # list_for_execute.append({"file_name" : "ticket_fields", "url" : f"{url_pattern}/api/v2/ticket_fields.json"})
+        # list_for_execute.append({"file_name" : "requests", "url" : f"{url_pattern}/api/v2/requests.json"})
+        # list_for_execute.append({"file_name" : "activities", "url" : f"{url_pattern}/api/v2/activities.json"})
+        # list_for_execute.append({"file_name" : "brands", "url" : f"{url_pattern}/api/v2/brands.json"})
+        # list_for_execute.append({"file_name" : "custom_statuses", "url" : f"{url_pattern}/api/v2/custom_statuses.json"})
+        # list_for_execute.append({"file_name" : "ticket_metrics", "url" : f"{url_pattern}/api/v2/ticket_metrics"})
+        # list_for_execute.append({"file_name" : "incremental_ticket_metric_events", "url" : f"{url_pattern}/api/v2/incremental/ticket_metric_events.json?start_time=1"},  )
         
         
-        if datetime.now().strftime("%A") == 'Sunday':
-            list_for_execute.append({"file_name" : "organizations", "url" : f"{url_pattern}/api/v2/users/search.json"})
+        # if datetime.now().strftime("%A") == 'Sunday':
+        #     list_for_execute.append({"file_name" : "organizations", "url" : f"{url_pattern}/api/v2/users/search.json"})
 
         
-        threads:List[multiprocessing.Process] = []
+        # threads:List[multiprocessing.Process] = []
         
-        for request in list_for_execute:
-            threads.append(multiprocessing.Process(target=MultiProcessos.execut, args=(register, saving_api_json, api_consume_admin, request["file_name"], request["url"])))
+        # for request in list_for_execute:
+        #     threads.append(multiprocessing.Process(target=MultiProcessos.execut, args=(register, saving_api_json, api_consume_admin, request["file_name"], request["url"])))
             
-        for process in threads:
-            process.start()
+        # for process in threads:
+        #     process.start()
         
-        for process in threads:
-            process.join()
+        # for process in threads:
+        #     process.join()
         
         
-        thread_alltickets.join()
+        
+        # thread_alltickets.join()
+        
+        saving_api_json.create_tickets_juridico(name_all_tickets)
         print(datetime.now() - agora)
     
     except Exception as error:
