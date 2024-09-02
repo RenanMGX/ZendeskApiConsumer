@@ -116,13 +116,15 @@ class SaveJson:
         df.to_json((self.path + file_name), orient='records', date_format='iso')
     
       
-    def create_tickets_juridico(self, 
+    def create_tickets_per_group(self, *,
                                 file_name_origin:str, 
-                                *, 
-                                file_name:str="tickets_juridico.json", 
-                                list_id_group:List[int]= [11065757529239, 11065863178903, 11065882706967, 11427801021847, 11065848016535, 11065883363607, 11065866307479]
-                                
+                                list_id_group:List[int],
+                                file_name:str
                                 ):
+        
+        if not list_id_group:
+            raise ValueError(f"lista 'list_id_group' está vazia")
+        
         if not file_name_origin.endswith('.json'):
             file_name_origin += '.json'
             
@@ -219,11 +221,10 @@ if __name__ == "__main__":
         for process in threads:
             process.join()
         
-        
-        
         thread_alltickets.join()
         
-        saving_api_json.create_tickets_juridico(name_all_tickets)
+        saving_api_json.create_tickets_per_group(file_name_origin=name_all_tickets, file_name ="tickets_juridico.json" , list_id_group = [11065757529239, 11065863178903, 11065882706967, 11427801021847, 11065848016535, 11065883363607, 11065866307479])
+        saving_api_json.create_tickets_per_group(file_name_origin=name_all_tickets, file_name="tickets_administrativo.json", list_id_group=[26071794815383])
         print(datetime.now() - agora)
     
     except Exception as error:
