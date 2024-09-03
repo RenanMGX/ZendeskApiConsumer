@@ -12,6 +12,7 @@ import pandas as pd
 from getpass import getuser
 from typing import List
 from shutil import copy2
+from copy import deepcopy
 
 class URLPattern:
     @property
@@ -117,7 +118,7 @@ class SaveJson:
     
       
     def create_tickets_per_group(self, *,
-                                file_name_origin:str, 
+                                df_temp:pd.DataFrame, 
                                 list_id_group:List[int],
                                 file_name:str
                                 ):
@@ -125,18 +126,16 @@ class SaveJson:
         if not list_id_group:
             raise ValueError(f"lista 'list_id_group' está vazia")
         
-        if not file_name_origin.endswith('.json'):
-            file_name_origin += '.json'
-            
-        file_path_origin:str = os.path.join(self.path, file_name_origin)
-        if not os.path.exists(file_path_origin):
-            raise Exception(f"o arquivo não existe '{file_path_origin}'")
-        
-        df:pd.DataFrame|pd.Series = pd.read_json(file_path_origin)
+        df = deepcopy(df_temp)
         
         df = df[df['group_id'].isin(list_id_group)]
         
         df.to_json(os.path.join(self.path, file_name), orient='records', date_format='iso')
+        
+        try:
+            del df
+        except:
+            pass
     
 
         
@@ -223,8 +222,19 @@ if __name__ == "__main__":
         
         thread_alltickets.join()
         
-        saving_api_json.create_tickets_per_group(file_name_origin=name_all_tickets, file_name ="tickets_juridico.json" , list_id_group = [11065757529239, 11065863178903, 11065882706967, 11427801021847, 11065848016535, 11065883363607, 11065866307479])
-        saving_api_json.create_tickets_per_group(file_name_origin=name_all_tickets, file_name="tickets_administrativo.json", list_id_group=[26071794815383])
+        all_tickets_path:str = os.path.join(saving_api_json.path, name_all_tickets)
+        if not all_tickets_path.endswith('.json'):
+            all_tickets_path += '.json'
+        print(all_tickets_path)
+        if os.path.exists(all_tickets_path):
+            df_all_tickets:pd.DataFrame|pd.Series = pd.read_json(all_tickets_path)            
+            saving_api_json.create_tickets_per_group(df_temp=df_all_tickets, file_name ="tickets_juridico.json" , list_id_group = [11065757529239, 11065863178903, 11065882706967, 11427801021847, 11065848016535, 11065883363607, 11065866307479])
+            saving_api_json.create_tickets_per_group(df_temp=df_all_tickets, file_name="tickets_administrativo.json", list_id_group=[26071794815383])
+            saving_api_json.create_tickets_per_group(df_temp=df_all_tickets, file_name="tickets_central_cadastro.json", list_id_group=[9812051534359])
+            saving_api_json.create_tickets_per_group(df_temp=df_all_tickets, file_name="tickets_suporte_ti.json", list_id_group=[1900000686425])
+            saving_api_json.create_tickets_per_group(df_temp=df_all_tickets, file_name="tickets_comunicacao.json", list_id_group=[13284137559319])
+            saving_api_json.create_tickets_per_group(df_temp=df_all_tickets, file_name="tickets_oracle.json", list_id_group=[22008267317783])
+            
         print(datetime.now() - agora)
     
     except Exception as error:
