@@ -5,7 +5,6 @@ import base64
 from time import sleep
 import pandas as pd
 import os
-from crenciais import Credential
 import multiprocessing
 #from datetime import datetime
 #import random
@@ -163,12 +162,12 @@ class Consume:
 
 
 if __name__ == "__main__":
-    #pass
+    pass
     #df = pd.read_excel('test.xlsx')
     #df.to_json('all_tickes_temp.json', orient='records')
-    crd:dict = Credential("API_ZENDESK").load()
-    bot = Consume(email=crd['user'], token=crd['password'])
-    bot.all_tickets(url_patter="https://patrimar.zendesk.com")
+    # crd:dict = Credential("API_ZENDESK").load()
+    # bot = Consume(email=crd['user'], token=crd['password'])
+    # bot.all_tickets(url_patter="https://patrimar.zendesk.com")
 
     #print(pd.DataFrame(api))
     

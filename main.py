@@ -1,10 +1,11 @@
 from Entities.api import Consume
-from Entities.crenciais import Credential
+from Entities.dependencies.credenciais import Credential
+from Entities.dependencies.config import Config
+from Entities.dependencies.logs import Logs, traceback
 from Entities.tratarDados import Tratar
 import os
 from datetime import datetime
 #import json
-import traceback
 #import sys
 import multiprocessing
 #import asyncio
@@ -109,12 +110,12 @@ class SaveJson:
         # with open((self.path + file_name), 'w', encoding='utf-8')as _file:
         #     json.dump(content, _file)
     
-    def tratar_tickets(self) -> None:
-        file_name:str="tickets.json"
-        if os.path.exists(path + file_name):
-            df:pd.DataFrame = pd.read_json(path + file_name)
-            df = Tratar.start(df)
-        df.to_json((self.path + file_name), orient='records', date_format='iso')
+    # def tratar_tickets(self) -> None:
+    #     file_name:str="tickets.json"
+    #     if os.path.exists(path + file_name):
+    #         df:pd.DataFrame = pd.read_json(path + file_name)
+    #         df = Tratar.start(df)
+    #     df.to_json((self.path + file_name), orient='records', date_format='iso')
     
       
     def create_tickets_per_group(self, *,
@@ -166,11 +167,11 @@ if __name__ == "__main__":
         
         url_pattern:str = URLPattern("https://patrimar.zendesk.com/").url
         
-        sharepoint_path:str = f"C:\\Users\\{getuser()}\\PATRIMAR ENGENHARIA S A\\RPA - Documentos\\RPA - Dados\\Zendesk\\API\\json\\"
+        sharepoint_path:str = Config()['paths']['sharepoint_path']
         
         register:Register = Register("logs")
         
-        crd:dict = Credential("API_ZENDESK").load()
+        crd:dict = Credential(Config()['credential']['crd']).load()
 
         try:    
             api_consume_admin:Consume = Consume(email=crd['user'], token=crd['password'])
@@ -236,14 +237,9 @@ if __name__ == "__main__":
             saving_api_json.create_tickets_per_group(df_temp=df_all_tickets, file_name="tickets_oracle.json", list_id_group=[22008267317783])
             
         print(datetime.now() - agora)
-    
-    except Exception as error:
-        path:str = "logs/"
-        if not os.path.exists(path):
-            os.makedirs(path)
-        file_name = path + f"LogError_{datetime.now().strftime('%d%m%Y%H%M%Y')}.txt"
-        with open(file_name, 'w', encoding='utf-8')as _file:
-            _file.write(traceback.format_exc())
-        raise error
+
+        Logs().register(status='Concluido', description="Extração dos dados do Zendesk Concluido!")
+    except Exception as err:
+        Logs().register(status='Error', description=str(err), exception=traceback.format_exc())
     
     
