@@ -140,9 +140,10 @@ class Tratar:
                 'projetos_patrimar_255' : 'Projetos Patrimar',
                 'const._real_255' : 'Const. Real',
                 'sat_novolar_255' : 'SAT Novolar',
-                'comercial_novolar_255' : 'Comercial Novolar'
+                'comercial_novolar_255' : 'Comercial Novolar',
+                'comercial_patrimar_255': 'Comercial Patrimar',
             }         
-        df["jc_diretoria_gerencia_ou_gerencia_de_obra"] = df["jc_diretoria_gerencia_ou_gerencia_de_obra"].map(nomeclatura)
+        df["jc_diretoria_gerencia_ou_gerencia_de_obra"] = df["jc_diretoria_gerencia_ou_gerencia_de_obra"].map(nomeclatura).fillna(df["jc_diretoria_gerencia_ou_gerencia_de_obra"])
                
         return df
             #df.to_json((self.path + file_name), orient='records', date_format='iso')
